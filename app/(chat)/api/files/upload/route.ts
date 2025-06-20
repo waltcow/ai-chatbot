@@ -1,5 +1,6 @@
-import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
 import { z } from 'zod';
 
 import { auth } from '@/app/(auth)/auth';
@@ -51,9 +52,28 @@ export async function POST(request: Request) {
     const fileBuffer = await file.arrayBuffer();
 
     try {
-      const data = await put(`${filename}`, fileBuffer, {
-        access: 'public',
-      });
+      // Create uploads directory if it doesn't exist
+      const uploadsDir = join(process.cwd(), 'public', 'uploads');
+      await mkdir(uploadsDir, { recursive: true });
+
+      // Generate unique filename to avoid conflicts
+      const timestamp = Date.now();
+      const uniqueFilename = `${timestamp}-${filename}`;
+      const filePath = join(uploadsDir, uniqueFilename);
+
+      // Save file to local filesystem
+      await writeFile(filePath, Buffer.from(fileBuffer));
+
+      // Return the URL that can be used to access the file
+      const fileUrl = `/uploads/${uniqueFilename}`;
+      
+      const data = {
+        url: fileUrl,
+        downloadUrl: fileUrl,
+        pathname: uniqueFilename,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+      };
 
       return NextResponse.json(data);
     } catch (error) {

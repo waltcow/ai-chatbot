@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH_SECRET=${AUTH_SECRET}
+      - XAI_API_KEY=${XAI_API_KEY}
+      - POSTGRES_URL=${POSTGRES_URL}
+      - REDIS_URL=${REDIS_URL}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    volumes:
+      - uploads:/app/public/uploads
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - chatbot-network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=chatbot
+      - POSTGRES_USER=chatbot_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-your_secure_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - chatbot-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - chatbot-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads:
+
+networks:
+  chatbot-network:
+    driver: bridge

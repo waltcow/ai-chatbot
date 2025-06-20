@@ -27,7 +27,7 @@ import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
 import { entitlementsByUserType } from '@/lib/ai/entitlements';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
-import { geolocation } from '@vercel/functions';
+// import { geolocation } from '@vercel/functions';
 import {
   createResumableStreamContext,
   type ResumableStreamContext,
@@ -38,6 +38,27 @@ import { differenceInSeconds } from 'date-fns';
 import { ChatSDKError } from '@/lib/errors';
 
 export const maxDuration = 60;
+
+// Alternative geolocation function to replace Vercel Functions
+function getLocationFromRequest(request: Request) {
+  // Try to get location from headers (requires reverse proxy setup)
+  const cfCountry = request.headers.get('cf-ipcountry');
+  const cfCity = request.headers.get('cf-ipcity');
+  const cfLat = request.headers.get('cf-iplat');
+  const cfLon = request.headers.get('cf-iplon');
+  
+  // Alternative: Use x-forwarded-for or other common headers
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  const realIp = request.headers.get('x-real-ip');
+  
+  return {
+    longitude: cfLon ? parseFloat(cfLon) : undefined,
+    latitude: cfLat ? parseFloat(cfLat) : undefined,
+    city: cfCity || undefined,
+    country: cfCountry || undefined,
+    ip: forwardedFor?.split(',')[0]?.trim() || realIp || undefined,
+  };
+}
 
 let globalStreamContext: ResumableStreamContext | null = null;
 
@@ -119,7 +140,7 @@ export async function POST(request: Request) {
       message,
     });
 
-    const { longitude, latitude, city, country } = geolocation(request);
+    const { longitude, latitude, city, country } = getLocationFromRequest(request);
 
     const requestHints: RequestHints = {
       longitude,

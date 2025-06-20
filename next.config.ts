@@ -6,11 +6,10 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        hostname: 'avatar.vercel.sh',
-      },
+      // Add your own image domains here if needed
     ],
   },
+  output: 'standalone',
 };
 
 export default nextConfig;
