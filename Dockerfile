@@ -58,4 +58,4 @@ ENV HOSTNAME "0.0.0.0"
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "rm -rf ./public/uploads/lost+found 2>/dev/null || true && node server.js"]
