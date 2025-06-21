@@ -1,0 +1,58 @@
+# Railway ignore file
+# Files and directories to exclude from Railway deployment
+
+# Development files
+.env.local
+.env.development
+.env.test
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Documentation (keep essential docs only)
+*.md
+!README.md
+!RAILWAY_DEPLOYMENT.md
+
+# Development scripts
+deploy-railway.sh
+
+# Temporary files
+tmp/
+temp/
+
+# Lock files (Railway will generate its own)
+# package-lock.json
+# yarn.lock
+
+# Build artifacts that will be rebuilt
+.next/
+out/
+
+# Node modules (will be installed during build)
+node_modules/
