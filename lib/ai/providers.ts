@@ -3,7 +3,7 @@ import {
   extractReasoningMiddleware,
   wrapLanguageModel,
 } from 'ai';
-import { xai } from '@ai-sdk/xai';
+import { togetherai } from '@ai-sdk/togetherai';
 import { isTestEnvironment } from '../constants';
 import {
   artifactModel,
@@ -23,15 +23,12 @@ export const myProvider = isTestEnvironment
     })
   : customProvider({
       languageModels: {
-        'chat-model': xai('grok-2-vision-1212'),
+        'chat-model': togetherai('deepseek-ai/DeepSeek-V3'),
         'chat-model-reasoning': wrapLanguageModel({
-          model: xai('grok-3-mini-beta'),
+          model: togetherai('deepseek-ai/DeepSeek-R1-0528-tput'),
           middleware: extractReasoningMiddleware({ tagName: 'think' }),
         }),
-        'title-model': xai('grok-2-1212'),
-        'artifact-model': xai('grok-2-1212'),
-      },
-      imageModels: {
-        'small-model': xai.image('grok-2-image'),
+        'title-model': togetherai('deepseek-ai/DeepSeek-V3'),
+        'artifact-model': togetherai('deepseek-ai/DeepSeek-V3'),
       },
     });
