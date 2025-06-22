@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
 import { z } from 'zod';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 import { auth } from '@/app/(auth)/auth';
 
@@ -16,6 +15,18 @@ const FileSchema = z.object({
     .refine((file) => ['image/jpeg', 'image/png'].includes(file.type), {
       message: 'File type should be JPEG or PNG',
     }),
+});
+
+// Initialize R2 client
+const r2Client = new S3Client({
+  region: 'auto',
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+  },
 });
 
 export async function POST(request: Request) {
@@ -52,31 +63,37 @@ export async function POST(request: Request) {
     const fileBuffer = await file.arrayBuffer();
 
     try {
-      // Create uploads directory if it doesn't exist
-      const uploadsDir = join(process.cwd(), 'public', 'uploads');
-      await mkdir(uploadsDir, { recursive: true });
-
       // Generate unique filename to avoid conflicts
       const timestamp = Date.now();
       const uniqueFilename = `${timestamp}-${filename}`;
-      const filePath = join(uploadsDir, uniqueFilename);
 
-      // Save file to local filesystem
-      await writeFile(filePath, Buffer.from(fileBuffer));
+      // Upload to Cloudflare R2
+      const uploadCommand = new PutObjectCommand({
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: uniqueFilename,
+        Body: new Uint8Array(fileBuffer),
+        ContentType: file.type,
+        ContentLength: file.size,
+      });
 
-      // Return the URL that can be used to access the file
-      const fileUrl = `/uploads/${uniqueFilename}`;
-      
+      await r2Client.send(uploadCommand);
+
+      // Construct the public URL
+      const fileUrl = `${process.env.R2_PUBLIC_URL}/${uniqueFilename}`;
+
       const data = {
         url: fileUrl,
         downloadUrl: fileUrl,
-        pathname: uniqueFilename,
+        pathname: filename, // 返回原始文件名用于显示
+        contentType: file.type, // 添加 contentType 用于前端判断文件类型
         size: file.size,
         uploadedAt: new Date().toISOString(),
       };
 
       return NextResponse.json(data);
     } catch (error) {
+      console.error('R2 upload error:', error);
       return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
     }
   } catch (error) {
