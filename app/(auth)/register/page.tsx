@@ -17,6 +17,9 @@ export default function Page() {
   const [email, setEmail] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
 
+  // Define registrationDisabled based on environment variable
+  const registrationDisabled = process.env.NEXT_PUBLIC_REGISTRATION_DISABLED === 'true';
+
   const [state, formAction] = useActionState<RegisterActionState, FormData>(
     register,
     {
