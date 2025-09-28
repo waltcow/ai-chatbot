@@ -38,7 +38,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                 <div className="flex flex-row gap-2">
                   <div className="size-6 bg-zinc-500/30 rounded-full animate-pulse" />
                   <span className="bg-zinc-500/30 text-transparent rounded-md animate-pulse">
-                    Loading auth status
+                    加载认证状态
                   </span>
                 </div>
                 <div className="animate-spin text-zinc-500">
@@ -86,7 +86,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                     toast({
                       type: 'error',
                       description:
-                        'Checking authentication status, please try again!',
+                        '正在检查认证状态，请重试！',
                     });
 
                     return;
@@ -97,7 +97,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                   });
                 }}
               >
-                Sign out
+                退出登录
               </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
