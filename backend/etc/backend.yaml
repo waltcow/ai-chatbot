@@ -1,0 +1,5 @@
+Name: backend
+Host: 0.0.0.0
+Port: 8888
+Database:
+  DSN: "postgres://user:password@localhost:5432/chatbot"
