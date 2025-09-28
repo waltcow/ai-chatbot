@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   if (!id) {
     return new ChatSDKError(
       'bad_request:api',
-      'Parameter id is missing',
+      '缺少 id 参数。',
     ).toResponse();
   }
 
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
   if (!id) {
     return new ChatSDKError(
       'bad_request:api',
-      'Parameter id is required.',
+      '必须提供 id 参数。',
     ).toResponse();
   }
 
@@ -92,14 +92,14 @@ export async function DELETE(request: Request) {
   if (!id) {
     return new ChatSDKError(
       'bad_request:api',
-      'Parameter id is required.',
+      '必须提供 id 参数。',
     ).toResponse();
   }
 
   if (!timestamp) {
     return new ChatSDKError(
       'bad_request:api',
-      'Parameter timestamp is required.',
+      '必须提供 timestamp 参数。',
     ).toResponse();
   }
 

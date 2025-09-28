@@ -8,8 +8,8 @@ import { SessionProvider } from 'next-auth/react';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
-  title: 'AI Chatbot',
-  description: 'Self-hosted AI chatbot using the AI SDK.',
+  title: 'AI 聊天机器人',
+  description: '基于 AI SDK 的自托管聊天机器人。',
 };
 
 export const viewport = {
@@ -55,7 +55,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="zh-CN"
       // `next-themes` injects an extra classname to the body element to avoid
       // visual flicker before hydration. Hence the `suppressHydrationWarning`
       // prop is necessary to avoid the React hydration mismatch warning.

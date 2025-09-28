@@ -31,21 +31,21 @@ export default function Page() {
 
   useEffect(() => {
     if (state.status === 'user_exists') {
-      toast({ type: 'error', description: 'Account already exists!' });
+      toast({ type: 'error', description: '账号已存在！' });
     } else if (state.status === 'failed') {
-      toast({ type: 'error', description: 'Failed to create account!' });
+      toast({ type: 'error', description: '创建账号失败！' });
     } else if (state.status === 'invalid_data') {
       toast({
         type: 'error',
-        description: 'Failed validating your submission!',
+        description: '提交校验失败！',
       });
     } else if (state.status === 'registration_disabled') {
       toast({
         type: 'error',
-        description: 'Registration is currently disabled!',
+        description: '注册功能暂时关闭！',
       });
     } else if (state.status === 'success') {
-      toast({ type: 'success', description: 'Account created successfully!' });
+      toast({ type: 'success', description: '账号创建成功！' });
 
       setIsSuccessful(true);
       updateSession();
@@ -62,14 +62,14 @@ export default function Page() {
     <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
       <div className="w-full max-w-md overflow-hidden rounded-2xl gap-12 flex flex-col">
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
-          <h3 className="text-xl font-semibold dark:text-zinc-50">Sign Up</h3>
+          <h3 className="text-xl font-semibold dark:text-zinc-50">注册</h3>
           {registrationDisabled ? (
             <p className="text-sm text-red-500 dark:text-red-400">
-              Registration is currently disabled
+              注册功能暂时不可用
             </p>
           ) : (
             <p className="text-sm text-gray-500 dark:text-zinc-400">
-              Create an account with your email and password
+              使用邮箱和密码创建账号
             </p>
           )}
         </div>
@@ -77,33 +77,32 @@ export default function Page() {
           <div className="px-4 sm:px-16">
             <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <p className="text-sm text-red-600 dark:text-red-400 text-center">
-                New user registration is currently disabled. Please contact an
-                administrator if you need access.
+                目前已暂停新用户注册。如需访问，请联系管理员。
               </p>
             </div>
             <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-              {'Already have an account? '}
+              {'已经有账号了？'}
               <Link
                 href="/login"
                 className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
               >
-                Sign in
+                立即登录
               </Link>
-              {' instead.'}
+              {'。'}
             </p>
           </div>
         ) : (
           <AuthForm action={handleSubmit} defaultEmail={email}>
-            <SubmitButton isSuccessful={isSuccessful}>Sign Up</SubmitButton>
+            <SubmitButton isSuccessful={isSuccessful}>注册</SubmitButton>
             <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-              {'Already have an account? '}
+              {'已经有账号了？'}
               <Link
                 href="/login"
                 className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
               >
-                Sign in
+                立即登录
               </Link>
-              {' instead.'}
+              {'。'}
             </p>
           </AuthForm>
         )}

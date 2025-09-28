@@ -202,7 +202,7 @@ export async function POST(request: Request) {
                 });
 
                 if (!assistantId) {
-                  throw new Error('No assistant message found!');
+                  throw new Error('未找到助手消息！');
                 }
 
                 const [, assistantMessage] = appendResponseMessages({
@@ -224,7 +224,7 @@ export async function POST(request: Request) {
                   ],
                 });
               } catch (_) {
-                console.error('Failed to save chat');
+                console.error('保存会话失败');
               }
             }
           },
@@ -241,7 +241,7 @@ export async function POST(request: Request) {
         });
       },
       onError: () => {
-        return 'Oops, an error occurred!';
+        return '哎呀，发生了错误！';
       },
     });
 

@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   if (!chatId) {
     return new ChatSDKError(
       'bad_request:api',
-      'Parameter chatId is required.',
+      '必须提供 chatId 参数。',
     ).toResponse();
   }
 
@@ -45,7 +45,7 @@ export async function PATCH(request: Request) {
   if (!chatId || !messageId || !type) {
     return new ChatSDKError(
       'bad_request:api',
-      'Parameters chatId, messageId, and type are required.',
+      '必须提供 chatId、messageId 和 type 参数。',
     ).toResponse();
   }
 
@@ -71,5 +71,5 @@ export async function PATCH(request: Request) {
     type: type,
   });
 
-  return new Response('Message voted', { status: 200 });
+  return new Response('消息投票成功', { status: 200 });
 }

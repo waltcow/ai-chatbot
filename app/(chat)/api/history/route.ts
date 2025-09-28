@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   if (startingAfter && endingBefore) {
     return new ChatSDKError(
       'bad_request:api',
-      'Only one of starting_after or ending_before can be provided.',
+      'starting_after 与 ending_before 只能二选一。',
     ).toResponse();
   }
 

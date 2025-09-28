@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
 import { z } from 'zod';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 import { auth } from '@/app/(auth)/auth';
 
@@ -9,35 +10,23 @@ const FileSchema = z.object({
   file: z
     .instanceof(Blob)
     .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: 'File size should be less than 5MB',
+      message: '文件大小必须小于 5MB',
     })
     // Update the file type based on the kind of files you want to accept
     .refine((file) => ['image/jpeg', 'image/png'].includes(file.type), {
-      message: 'File type should be JPEG or PNG',
+      message: '仅支持 JPEG 或 PNG 文件类型',
     }),
-});
-
-// Initialize R2 client
-const r2Client = new S3Client({
-  region: 'auto',
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-  },
 });
 
 export async function POST(request: Request) {
   const session = await auth();
 
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: '未授权' }, { status: 401 });
   }
 
   if (request.body === null) {
-    return new Response('Request body is empty', { status: 400 });
+    return new Response('请求正文为空', { status: 400 });
   }
 
   try {
@@ -45,7 +34,7 @@ export async function POST(request: Request) {
     const file = formData.get('file') as Blob;
 
     if (!file) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+      return NextResponse.json({ error: '未上传文件' }, { status: 400 });
     }
 
     const validatedFile = FileSchema.safeParse({ file });
@@ -63,24 +52,20 @@ export async function POST(request: Request) {
     const fileBuffer = await file.arrayBuffer();
 
     try {
+      // Create uploads directory if it doesn't exist
+      const uploadsDir = join(process.cwd(), 'public', 'uploads');
+      await mkdir(uploadsDir, { recursive: true });
+
       // Generate unique filename to avoid conflicts
       const timestamp = Date.now();
       const uniqueFilename = `${timestamp}-${filename}`;
+      const filePath = join(uploadsDir, uniqueFilename);
 
-      // Upload to Cloudflare R2
-      const uploadCommand = new PutObjectCommand({
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        Bucket: process.env.R2_BUCKET_NAME!,
-        Key: uniqueFilename,
-        Body: new Uint8Array(fileBuffer),
-        ContentType: file.type,
-        ContentLength: file.size,
-      });
+      // Save file to local filesystem
+      await writeFile(filePath, Buffer.from(fileBuffer));
 
-      await r2Client.send(uploadCommand);
-
-      // Construct the public URL
-      const fileUrl = `${process.env.R2_PUBLIC_URL}/${uniqueFilename}`;
+      // Return the URL that can be used to access the file
+      const fileUrl = `/uploads/${uniqueFilename}`;
 
       const data = {
         url: fileUrl,
@@ -93,12 +78,12 @@ export async function POST(request: Request) {
 
       return NextResponse.json(data);
     } catch (error) {
-      console.error('R2 upload error:', error);
-      return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+      console.error('Local upload error:', error);
+      return NextResponse.json({ error: '上传失败' }, { status: 500 });
     }
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to process request' },
+      { error: '请求处理失败' },
       { status: 500 },
     );
   }
