@@ -8,8 +8,8 @@ import { SessionProvider } from 'next-auth/react';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
-  title: 'AI 聊天机器人',
-  description: '基于 AI SDK 的自托管聊天机器人。',
+  title: '基于大模型的提示词训练学习系统V1.0',
+  description: '基于大模型的提示词训练学习系统V1.0',
 };
 
 export const viewport = {

@@ -19,24 +19,24 @@ function PureSuggestedActions({
 }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      title: 'What are the advantages',
-      label: 'of using Next.js?',
-      action: 'What are the advantages of using Next.js?',
+      title: '使用Python分析数据',
+      label: '演示一下Python分析数据',
+      action: '使用 Python 分析数据有什么好处？',
     },
     {
-      title: 'Write code to',
-      label: `demonstrate djikstra's algorithm`,
-      action: `Write code to demonstrate djikstra's algorithm`,
+      title: '编写代码来演示djikstra算法',
+      label: `演示djikstra算法`,
+      action: `编写代码来演示djikstra算法`,
+    },  
+    {
+      title: '帮我写一篇关于硅谷的文章',
+      label: `关于硅谷的文章`,
+      action: `帮我写一篇关于硅谷的文章`,
     },
     {
-      title: 'Help me write an essay',
-      label: `about silicon valley`,
-      action: `Help me write an essay about silicon valley`,
-    },
-    {
-      title: 'What is the weather',
-      label: 'in San Francisco?',
-      action: 'What is the weather in San Francisco?',
+      title: '广州最近的天气',
+      label: '怎么样？',
+      action: '广州的天气怎么样？',
     },
   ];
 
